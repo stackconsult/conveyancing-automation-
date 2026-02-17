@@ -1,0 +1,77 @@
+# Memory-Enhanced Docker Configuration
+
+"""
+Docker configuration for memory-enhanced conveyancing automation system.
+Includes all necessary services and memory integration setup.
+"""
+
+# Use Python 3.11 slim image
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    git \
+    gnupg \
+    wget \
+    vim \
+    ghostscript \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    libtesseract-dev \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements_memory_enhanced.txt .
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements_memory_enhanced.txt && \
+    pip install --no-deps spacy && \
+    python -m spacy download en_core_web_sm
+
+# Download and install additional models
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('averaged_perceptron_tagger')"
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/memory /app/logs /app/uploads /app/temp /app/data
+
+# Set permissions
+RUN chmod +x /app/main_memory_enhanced.py
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app && \
+    chown -R app:app /app
+USER app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import asyncio; from main_memory_enhanced import MemoryEnhancedConveyancingApp; asyncio.run(MemoryEnhancedConveyancingApp().get_system_status())" || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Default command
+CMD ["python", "main_memory_enhanced.py"]

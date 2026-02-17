@@ -1,0 +1,41 @@
+{
+  "execution_id": "build_20260216_232017",
+  "started_at": "2026-02-16T23:20:17.183163",
+  "completed_at": "2026-02-16T23:20:17.184898",
+  "overall_status": "completed",
+  "total_tokens_used": 30000,
+  "total_execution_time_ms": 0,
+  "success_rate": 1.0,
+  "results": [
+    {
+      "model_type": "claude-3.5-sonnet",
+      "phase": "architecture_planning",
+      "status": "completed",
+      "execution_time_ms": 0,
+      "tokens_used": 8000,
+      "quality_score": 0.7459999999999999,
+      "validation_passed": true,
+      "error": null
+    },
+    {
+      "model_type": "gpt-4o",
+      "phase": "core_implementation",
+      "status": "completed",
+      "execution_time_ms": 0,
+      "tokens_used": 12000,
+      "quality_score": 1.0,
+      "validation_passed": false,
+      "error": null
+    },
+    {
+      "model_type": "deepseek-r1",
+      "phase": "domain_logic",
+      "status": "completed",
+      "execution_time_ms": 0,
+      "tokens_used": 10000,
+      "quality_score": 1.0,
+      "validation_passed": true,
+      "error": null
+    }
+  ]
+}
